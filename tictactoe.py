@@ -60,27 +60,38 @@ class tictactoe:
 
 
     def check_win(self):
+            
         for x_row, o_row in zip(self.x_map, self.o_map):
             if all(x_row):
-                return 1
+                return (1 ,True)
             elif all(o_row):
-                return -1
+                return (-1, True)
 
         transposed_x = [list(i) for i in zip(*self.x_map)]
         transposed_y = [list(i) for i in zip(*self.o_map)]
         for x_row, o_row in zip(transposed_x, transposed_y):
             if all(x_row):
-                return 1
+                return (1, True)
             elif all(o_row):
-                return -1
+                return (-1, True)
         
-
+        
         if all([row[i] for i,row in enumerate(self.x_map)]) or all([row[-i-1] for i,row in enumerate(self.x_map)]):
-            return 1
+            return (1, True)
         elif all([row[i] for i,row in enumerate(self.o_map)]) or all([row[-i-1] for i,row in enumerate(self.o_map)]):
-            return -1
+            return (-1, True)
 
-        return 0 
+        control_list = []
+        for x_row, o_row in zip(self.x_map, self.o_map):
+            for x_col, o_col in zip(x_row, o_row):
+                control_list.append(x_col or o_col)
+        
+        if all(control_list):
+            
+            return (0, True)
+
+        return (0, False) 
+
 
     def get_board(self):
         return (self.x_map, self.o_map)
@@ -94,7 +105,7 @@ while not finished:
     print(player_move)
     game.make_move(1, *player_move)
     game.show_board()
-    status = game.check_win()
+    status,terminal = game.check_win()
     if status == 1:
         finished = True
         print("X Won!")
@@ -102,13 +113,17 @@ while not finished:
     elif status == -1:
         finished = True
         print("O Won!")
+        break
+    elif status == 0 and terminal:
+        finished = True
+        print("Draw!")
         break
 
     ai_move = [x+1 for x in minmax(*game.get_board(),True)]
     print(ai_move)
     game.make_move(0, *ai_move)
     game.show_board()
-    status = game.check_win()
+    status,terminal = game.check_win()
     if status == 1:
         finished = True
         print("X Won!")
@@ -116,4 +131,8 @@ while not finished:
     elif status == -1:
         finished = True
         print("O Won!")
+        break
+    elif status == 0 and terminal:
+        finished = True
+        print("Draw!")
         break

@@ -3,34 +3,41 @@ import copy
 def check_win(board_x, board_o):
     for x_row, o_row in zip(board_x, board_o):
         if all(x_row):
-            return 1
+            return (1 ,True)
         elif all(o_row):
-            return -1
+            return (-1, True)
 
     transposed_x = [list(i) for i in zip(*board_x)]
     transposed_y = [list(i) for i in zip(*board_o)]
     for x_row, o_row in zip(transposed_x, transposed_y):
         if all(x_row):
-            return 1
+            return (1, True)
         elif all(o_row):
-            return -1
+            return (-1, True)
     
-
+    
     if all([row[i] for i,row in enumerate(board_x)]) or all([row[-i-1] for i,row in enumerate(board_x)]):
-        return 1
+        return (1, True)
     elif all([row[i] for i,row in enumerate(board_o)]) or all([row[-i-1] for i,row in enumerate(board_o)]):
-        return -1
+        return (-1, True)
 
+    control_list = []
+    for x_row, o_row in zip(board_x, board_o):
+        for x_col, o_col in zip(x_row, o_row):
+            control_list.append(x_col or o_col)
     
+    if all(control_list):
+        return (0, True)
 
+    return (0, False)
 
 count = 0
 
 def max_value(board_x,board_o):
     global count
     count +=1
-    result = check_win(board_x, board_o)
-    if result != 0: 
+    result, terminate = check_win(board_x, board_o)
+    if terminate: 
         return result
         
     v = -10000
@@ -51,8 +58,8 @@ def max_value(board_x,board_o):
 def min_value(board_x, board_o):
     global count
     count +=1
-    result = check_win(board_x, board_o)
-    if result != 0:
+    result, terminate = check_win(board_x, board_o)
+    if terminate: 
         return result
     
     v = 10000
@@ -77,8 +84,8 @@ count_ab = 0
 def max_value_ab(board_x,board_o, alpha, beta):
     global count_ab
     count_ab +=1
-    result = check_win(board_x, board_o)
-    if result != 0: 
+    result, terminate = check_win(board_x, board_o)
+    if terminate: 
         return result
         
     v = -10000
@@ -103,8 +110,8 @@ def max_value_ab(board_x,board_o, alpha, beta):
 def min_value_ab(board_x, board_o, alpha, beta):
     global count_ab
     count_ab +=1
-    result = check_win(board_x, board_o)
-    if result != 0:
+    result, terminate = check_win(board_x, board_o)
+    if terminate: 
         return result
     
     v = 10000
